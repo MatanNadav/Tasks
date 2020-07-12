@@ -1,0 +1,33 @@
+tr {
+    border-bottom: 1px solid black;
+    text-align: center;
+}
+
+td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+.btn {
+    outline: none;
+    padding: 2px;
+    margin: 5px;
+    border: 1px solid rgb(44, 44, 221);
+    color: black;
+
+}
+
+.action-edit, .action-delete {
+    width: 55px;
+    background: transparent;
+}
+
+.btn:hover {
+    cursor: pointer;
+    background: rgb(44, 44, 221);
+    color: #fff;
+}
+
+.complete {
+    color: grey;
+}

@@ -1,0 +1,12 @@
+.tasks-table {
+    width: 70%;
+    height: 70%;
+    border-bottom: 1px solid black;
+    margin: 0 auto;
+}
+
+.tasks-table thead {
+    font-weight: 700;
+    font-size: 18;
+    text-align: center;
+}
