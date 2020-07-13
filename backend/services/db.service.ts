@@ -7,7 +7,7 @@ export async function connect(): Promise<Pool> {
         user: dbKeys.user,
         password: dbKeys.password,
         database: dbKeys.database,
-        connectionLimit: 10
+        connectionLimit: 20
     });
     return connection;
 }

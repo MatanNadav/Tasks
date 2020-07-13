@@ -44,10 +44,11 @@ export async function getTask(req: Request, res: Response) {
 }
 
 export async function deleteTask(req: Request, res: Response) {
-    const id = req.params.taskId
+    const id = req.query.q
+    
     try {
         const conn = await connect()
-        await conn.query('DELETE FROM tasks WHERE id = ?', [id]);
+        await conn.query('DELETE FROM heroku_4fca849545158fb.tasks WHERE id = ?', [id]);
         res.json({
             message: "Task deleted"
         })
@@ -58,11 +59,12 @@ export async function deleteTask(req: Request, res: Response) {
 }
 
 export async function updateTask(req: Request, res: Response) {
-    const id = req.params.postId
     const updatedTask: Task = req.body.task
+    const id = req.body.task.id
+    
     try {
         const conn = await connect()
-        await conn.query('UPDATE tasks SET ? WHERE id = ?',[updatedTask, id]);
+        await conn.query('UPDATE tasks SET title = ?, is_finished = ? WHERE id = ?',[updatedTask.title, updatedTask.is_finished, id]);
         res.json({
             message: 'Task Updated'
         });

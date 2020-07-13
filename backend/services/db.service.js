@@ -49,7 +49,7 @@ function connect() {
                         user: config_1.dbKeys.user,
                         password: config_1.dbKeys.password,
                         database: config_1.dbKeys.database,
-                        connectionLimit: 10
+                        connectionLimit: 20
                     })];
                 case 1:
                     connection = _a.sent();

@@ -123,14 +123,14 @@ function deleteTask(req, res) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    id = req.params.taskId;
+                    id = req.query.q;
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
                     return [4 /*yield*/, db_service_1.connect()];
                 case 2:
                     conn = _a.sent();
-                    return [4 /*yield*/, conn.query('DELETE FROM tasks WHERE id = ?', [id])];
+                    return [4 /*yield*/, conn.query('DELETE FROM heroku_4fca849545158fb.tasks WHERE id = ?', [id])];
                 case 3:
                     _a.sent();
                     res.json({
@@ -148,19 +148,19 @@ function deleteTask(req, res) {
 exports.deleteTask = deleteTask;
 function updateTask(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, updatedTask, conn, err_5;
+        var updatedTask, id, conn, err_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    id = req.params.postId;
                     updatedTask = req.body.task;
+                    id = req.body.task.id;
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
                     return [4 /*yield*/, db_service_1.connect()];
                 case 2:
                     conn = _a.sent();
-                    return [4 /*yield*/, conn.query('UPDATE tasks SET ? WHERE id = ?', [updatedTask, id])];
+                    return [4 /*yield*/, conn.query('UPDATE tasks SET title = ?, is_finished = ? WHERE id = ?', [updatedTask.title, updatedTask.is_finished, id])];
                 case 3:
                     _a.sent();
                     res.json({
