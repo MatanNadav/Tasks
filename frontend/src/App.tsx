@@ -2,75 +2,79 @@ import React, { Component }from 'react';
 import './App.css';
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { TaskList } from "./components/TaskList/TaskList"
+import  TaskEdit  from "./components/TaskEdit/TaskEdit"
+import { AddTask } from "./components/AddTask/AddTask"
 import { fetchTasks, deleteTaskById, createTask, updateTask } from "./services/TaskService"
 
 export default class App extends Component {
-  state = {
-    tasks: []
-  }
-  async componentWillMount() {
-    let res = await fetchTasks()
-    res.forEach((task: Task) => {
-      task.created_at = new Date(task.created_at).toDateString()
-      if (task.is_finished) task.is_finished = true
-      else task.is_finished = false
-    })
-    this.setState({ tasks: res})
-  }
+    state = {
+      tasks: []
+    }
+  
+    async componentWillMount() { // getting all tasks
+      let res = await fetchTasks()
+      res.forEach((task: Task) => {
+        task.created_at = new Date(task.created_at).toDateString()
+        if (task.is_finished) task.is_finished = true
+        else task.is_finished = false
+      })
+      this.setState({ tasks: res})
+    }
+  
+    toggleTask: toggleTask = async (selectedTask) => { // Changing task status
+      selectedTask.is_finished = !selectedTask.is_finished
 
-  toggleTask: toggleTask = (selectedTask) => {
-    
-    const newTasks = this.state.tasks.map( (task:Task) => {
-      if (task.id === selectedTask.id) {
-        return {
-          ...task,
-          is_finished: !task.is_finished
+      this.updateTask(selectedTask)
+    }
+  
+    deleteTask: deleteTask = async (selectedTask) => { // Deleting a task
+      let tasksToRender:Array<Task> = []
+      this.state.tasks.forEach( ( task:Task) => {
+        if (task.id !== selectedTask.id) {
+          tasksToRender.push(task)
         }
-      }
-      return task
-    })
-    this.setState({ tasks: newTasks })
-  }
+      })
+      this.setState({ tasks: tasksToRender })
+      let res = await deleteTaskById(selectedTask.id)
+      if (res.status !== 200) alert("Error: task wasnt deleted from DB")
+    }
 
-  deleteTask: deleteTask = async (selectedTask) => {
-    let res = await deleteTaskById(selectedTask.id)
-    
-    if (res.status === "OK") {
-      const renderTasks = this.state.tasks.map( ( task:Task, idx) => {
-        
-        if (task.id === selectedTask.id) {
-          this.state.tasks.splice(idx, 1)
+    updateTask: updateTask = async (selectedTask) => { // Updating a task
+        let tasksToRender:Array<Task> = this.state.tasks
+        let idx = this.state.tasks.findIndex((task:Task) => {
+          return (task.id === selectedTask.id)
+        })
+        if (idx >= 0) {
+          tasksToRender[idx] = selectedTask
+          this.setState({tasks: tasksToRender})
         }
-        return task
-    })
-    console.log(this.state.tasks);
+      
+      let res = await updateTask(selectedTask)
+      if (res.status !== 200) alert("Error: task didint update to DB")
+
+    }
+
+    getTask: getTask = (id) => {
+      let idx = this.state.tasks.findIndex( (task: Task) => {
+        return (Number(task.id) === Number(id))
+      })
+      
+      if (idx >= 0) return this.state.tasks[idx]
+    }
+  
+    addTask: addTask = async (newTask: Object) => { // Adding a task
+      let tasksToRender:Array<any> = this.state.tasks
+      tasksToRender.push(newTask)
+      let length = tasksToRender.length - 1
+      tasksToRender[length].created_at = new Date(tasksToRender[length].created_at).toDateString()
+      this.setState({tasks: tasksToRender})
+      let res = await createTask(newTask)
+      if (res.status !== 200) alert("Error: task didint add to DB")
+    }
     
+
+
     
-    this.setState({ tasks: renderTasks })
-  }
-}
-
-async addTask(newTask: string) {
-    if(newTask.trim() !== '') {
-      let taskToAdd = this.formatNewTask(newTask)
-      let res = await createTask(taskToAdd)
-      if (res.status === "OK") {
-        this.componentWillMount()
-      }
-  }
-}
-
-formatNewTask(taskText:string) {
-  return {
-    id: null,
-    user_id: null,
-    title: taskText,
-    created_at: Date.now(),
-    is_finished: false,
-    name: ''
-  }
-}
-
 
   render() {
     const tasks = this.state.tasks
@@ -78,8 +82,12 @@ formatNewTask(taskText:string) {
       <div className="tasks-app">
           <HashRouter>
             <Switch>
-              <Route exact path="/" component={() => <TaskList tasks={tasks} addTask={this.addTask} toggleTask={this.toggleTask} deleteTask={this.deleteTask}/>}></Route>
+              <Route exact path="/" component={() => <TaskList tasks={tasks} updateTask={this.updateTask} toggleTask={this.toggleTask} deleteTask={this.deleteTask}/>}></Route>
+              <Route path="/:id" render={({match}) => (
+                <TaskEdit updateTask={this.updateTask} getTask={this.getTask} id={match.params.id}></TaskEdit>
+                )}></Route>
             </Switch>
+            <Route exact path="/"><AddTask addTask={this.addTask}></AddTask></Route>
           </HashRouter>
           
       </div>

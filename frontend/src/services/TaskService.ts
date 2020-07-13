@@ -17,31 +17,28 @@ export async function fetchTasks(): Promise<any> {
 }
 
 export async function fetchTaskById(id: string): Promise<any> {
-    let q = `?q=${id}`
-    const res = await axios.get(`${BASE_URL}task`+ q )
+    const res = await axios.get(`${BASE_URL}task/`+ id )
     return res.data
 }
 
 export async function deleteTaskById(id: number): Promise<any> {
-    let q = `q=${id}`
-    const res = await axios.delete(`${BASE_URL}task` + q)
-    return res.data
+    
+    let q = `?q=${id}`
+    const res = await axios.delete(`${BASE_URL}task`+ q)
+    
+    return res
 }
 
-export async function createTask(newTask: object): Promise<any> {
-    console.log(BASE_URL);
-    
+export async function createTask(newTask: Object): Promise<any> {
     const res = axios({
         method: 'post',
         url:`${BASE_URL}task`,
-        // url:`/localhost:8080/task`,
         data: {task:newTask}
     })
     return res
 }
 
-export async function updateTask(updatedTask: object): Promise<any> {
-    
+export async function updateTask(updatedTask: Task): Promise<any> {
     const res = axios({
         method: 'put',
         url:`${BASE_URL}task`,

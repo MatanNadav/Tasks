@@ -18,16 +18,21 @@ td {
 }
 
 .action-edit, .action-delete {
-    width: 55px;
     background: transparent;
 }
 
-.btn:hover {
+.btn:hover, .edit-link:hover {
     cursor: pointer;
     background: rgb(44, 44, 221);
     color: #fff;
 }
 
 .complete {
-    color: grey;
+    color: rgb(77, 75, 75);
+    opacity: 0.8;
+}
+
+.edit-link {
+    color: black;
+    text-decoration: none;
 }

@@ -1,0 +1,31 @@
+.add-task-container {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+
+}
+
+.add-input {
+    padding: 4px;
+    margin: 10px;
+    font-size: 16px;
+    border-width: 2px;
+    border-color: #110101;
+    background-color: #e6dddd;
+    color: #000000;
+}
+
+.add-btn {
+    outline: none;
+    padding: 2px;
+    margin: 5px;
+    border: 1px solid rgb(44, 44, 221);
+    color: black;
+    background: transparent;
+}
+
+.add-btn:hover {
+    cursor: pointer;
+    background: rgb(44, 44, 221);
+    color: #fff;
+}
