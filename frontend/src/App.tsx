@@ -1,6 +1,6 @@
 import React, { Component }from 'react';
 import './App.css';
-import { HashRouter, Switch, Route } from 'react-router-dom'
+import { HashRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { TaskList } from "./components/TaskList/TaskList"
 import { UserLogin } from "./components/UserLogin/UserLogin"
 import  TaskEdit  from "./components/TaskEdit/TaskEdit"
@@ -10,10 +10,21 @@ import { login } from "./services/UserService"
 
 export default class App extends Component {
     state = {
-      tasks: []
+      tasks: [],
+      user: {},
+      redirect: false
     }
   
-    async componentWillMount() { // getting all tasks
+    // async componentWillMount() { // getting all tasks
+    //   let res = await fetchTasks()
+    //   res.forEach((task: Task) => {
+    //     task.created_at = new Date(task.created_at).toDateString()
+    //     if (task.is_finished) task.is_finished = !!task.is_finished // converting binary value to boolean
+    //   })
+    //   this.setState({ tasks: res })
+    // }
+
+    async loadTasks() {
       let res = await fetchTasks()
       res.forEach((task: Task) => {
         task.created_at = new Date(task.created_at).toDateString()
@@ -67,11 +78,18 @@ export default class App extends Component {
 
     loginUser: loginUser = async (user) => {
       let res = await login(user)
+      console.log(res);
+      
+      if (res.name) {
+        this.loadTasks()
+        this.setState({ user: res.data, redirect: true })
+      }
       
     }
 
     validateUser: validateUser = (newUser) => {
-      console.log(newUser)
+      if (!(newUser.name && newUser.password)) return
+      this.loginUser(newUser)
     }
 
     createUser: createUser = async (user) => {
@@ -79,12 +97,21 @@ export default class App extends Component {
     }
 
   render() {
-    const tasks = this.state.tasks
+    const {tasks} = this.state
+    const {redirect} = this.state
+    if (redirect) {
+      return (
+        <HashRouter>
+          <Redirect to={{pathname:'/tasks'}}/>
+        </HashRouter>
+      )
+    }
     return (
       <div className="tasks-app">
           <HashRouter>
             <Switch>
-              <Route exact path="/" component={()=> <UserLogin validateUser={this.validateUser} loginUser={this.loginUser}  ></UserLogin>}></Route>
+              <Route exact path="/" component={()=> <UserLogin validateUser={this.validateUser} loginUser={this.loginUser}  createUser={this.createUser}></UserLogin>}></Route>
+              
               <Route exact path="/tasks" component={() => <TaskList tasks={tasks} updateTask={this.updateTask} toggleTask={this.toggleTask} deleteTask={this.deleteTask}/>}></Route>
               <Route path="/tasks/:id" render={({match}) => (
                 <TaskEdit updateTask={this.updateTask} getTask={this.getTask} id={match.params.id}></TaskEdit>

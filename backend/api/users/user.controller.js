@@ -98,13 +98,13 @@ function createUser(req, res) {
 exports.createUser = createUser;
 function login(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, conn, dbUser, userFromDB, err_3;
+        var user, conn, dbUser, userFromDB_1, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!req.body.name)
+                    if (!req.body.user.name)
                         return [2 /*return*/, res.sendStatus(401)];
-                    user = req.body;
+                    user = req.body.user;
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
@@ -114,13 +114,17 @@ function login(req, res) {
                     return [4 /*yield*/, conn.query('SELECT * FROM users WHERE name = ?', [user.name])];
                 case 3:
                     dbUser = _a.sent();
-                    userFromDB = dbUser[0][0];
-                    if (!userFromDB || userFromDB.password !== user.password)
+                    userFromDB_1 = dbUser[0][0];
+                    console.log(dbUser);
+                    console.log('=======================================================================================');
+                    console.log(dbUser[0]);
+                    if (!userFromDB_1 || userFromDB_1.password !== user.password)
                         return [2 /*return*/, res.sendStatus(401)]; //Authorizong the User in the DB
-                    jwt.sign({ userFromDB: userFromDB }, config_1.secret, { expiresIn: '3m' }, function (err, token) {
+                    jwt.sign({ userFromDB: userFromDB_1 }, config_1.secret, { expiresIn: '10m' }, function (err, token) {
                         if (err)
                             res.sendStatus(403);
                         res.json({
+                            user: userFromDB_1,
                             token: token
                         });
                     });

@@ -54,13 +54,17 @@ function getTasks(req, res) {
                         switch (_a.label) {
                             case 0:
                                 console.log('inside token verifying');
-                                return [4 /*yield*/, db_service_1.connect()];
-                            case 1:
+                                if (!err) return [3 /*break*/, 1];
+                                res.sendStatus(403);
+                                return [3 /*break*/, 4];
+                            case 1: return [4 /*yield*/, db_service_1.connect()];
+                            case 2:
                                 conn = _a.sent();
                                 return [4 /*yield*/, conn.query('SELECT * FROM tasks')];
-                            case 2:
+                            case 3:
                                 tasks = _a.sent();
                                 return [2 /*return*/, res.json(tasks[0])];
+                            case 4: return [2 /*return*/];
                         }
                     });
                 }); });

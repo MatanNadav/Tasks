@@ -20,8 +20,7 @@ type deleteTask = (selectedTask: Task) => void
 type addTask = (newTask: Task) => void
 type updateTask = (selectedTask: Task) => void
 type getTask = (id: number) => any
+
 type validateUser = (user: User) => void
 type createUser = (user: User) => void
-
-
 type loginUser = (user: User) => void

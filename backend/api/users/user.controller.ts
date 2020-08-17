@@ -36,16 +36,21 @@ export async function createUser(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-    if (!req.body.name) return res.sendStatus(401)
-    const user = req.body
+    if (!req.body.user.name) return res.sendStatus(401)
+    const user = req.body.user
     try {
         const conn = await connect()
         const dbUser = await conn.query('SELECT * FROM users WHERE name = ?', [user.name])
         const userFromDB = dbUser[0][0]
+        console.log(dbUser)
+        console.log('=======================================================================================')
+        console.log(dbUser[0])
+
         if( !userFromDB || userFromDB.password !== user.password) return res.sendStatus(401) //Authorizong the User in the DB
-        jwt.sign( {userFromDB}, secret, { expiresIn: '3m'}, (err, token) => { // Assigning the user with his token for X amount of time
+        jwt.sign( {userFromDB}, secret, { expiresIn: '10m'}, (err, token) => { // Assigning the user with his token for X amount of time
             if (err) res.sendStatus(403)
             res.json({
+                user: userFromDB,
                 token
             })
         })

@@ -11,10 +11,10 @@ interface TaskProps {
 }
 
 export const TaskList: React.FC<TaskProps> = ({tasks, toggleTask, deleteTask}) => {
-
+    
     return (
-        <div className="list-container">
-            <h1>Propit Todo App</h1>
+        tasks && <div className="list-container">
+            <h1>Todo App</h1>
 
             <table className = "table-container">
                <thead>
