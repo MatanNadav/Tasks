@@ -2,9 +2,11 @@ import React, { Component }from 'react';
 import './App.css';
 import { HashRouter, Switch, Route } from 'react-router-dom'
 import { TaskList } from "./components/TaskList/TaskList"
+import { UserLogin } from "./components/UserLogin/UserLogin"
 import  TaskEdit  from "./components/TaskEdit/TaskEdit"
 import { AddTask } from "./components/AddTask/AddTask"
 import { fetchTasks, deleteTaskById, createTask, updateTask } from "./services/TaskService"
+import { login } from "./services/UserService"
 
 export default class App extends Component {
     state = {
@@ -15,66 +17,66 @@ export default class App extends Component {
       let res = await fetchTasks()
       res.forEach((task: Task) => {
         task.created_at = new Date(task.created_at).toDateString()
-        if (task.is_finished) task.is_finished = true
-        else task.is_finished = false
+        if (task.is_finished) task.is_finished = !!task.is_finished // converting binary value to boolean
       })
-      this.setState({ tasks: res})
+      this.setState({ tasks: res })
     }
   
     toggleTask: toggleTask = async (selectedTask) => { // Changing task status
       selectedTask.is_finished = !selectedTask.is_finished
-
       this.updateTask(selectedTask)
     }
   
     deleteTask: deleteTask = async (selectedTask) => { // Deleting a task
-      let tasksToRender:Array<Task> = []
-      this.state.tasks.forEach( ( task:Task) => {
-        if (task.id !== selectedTask.id) {
-          tasksToRender.push(task)
-        }
-      })
-      this.setState({ tasks: tasksToRender })
       let res = await deleteTaskById(selectedTask.id)
-      if (res.status !== 200) alert("Error: task wasnt deleted from DB")
+      if (res.status !== 200) {
+        alert("Error: task wasnt deleted from DB")
+        return
+      }
+      this.setState({ tasks: this.state.tasks.filter( (task:Task) => task.id !== selectedTask.id)})
     }
 
     updateTask: updateTask = async (selectedTask) => { // Updating a task
-        let tasksToRender:Array<Task> = this.state.tasks
-        let idx = this.state.tasks.findIndex((task:Task) => {
-          return (task.id === selectedTask.id)
-        })
-        if (idx >= 0) {
-          tasksToRender[idx] = selectedTask
-          this.setState({tasks: tasksToRender})
-        }
-      
-      let res = await updateTask(selectedTask)
-      if (res.status !== 200) alert("Error: task didint update to DB")
+    
+      this.setState({ tasks: this.state.tasks.map((task: Task) => {
+        if (task.id === selectedTask.id) return selectedTask
+        else return task
+      })})
 
+      let res = await updateTask(selectedTask) // updating DB after DOM for user experience | TODO: Loader
+      if (res.status !== 200) alert("Error: task wasnt updated in DB")
     }
 
     getTask: getTask = (id) => {
-      let idx = this.state.tasks.findIndex( (task: Task) => {
-        return (Number(task.id) === Number(id))
-      })
-      
-      if (idx >= 0) return this.state.tasks[idx]
+      let task = this.state.tasks.find((tasks:Task) => {return Number(tasks.id) === Number(id)})
+      if (task) return task
     }
+
   
-    addTask: addTask = async (newTask: Object) => { // Adding a task
-      let tasksToRender:Array<any> = this.state.tasks
-      tasksToRender.push(newTask)
-      let length = tasksToRender.length - 1
-      tasksToRender[length].created_at = new Date(tasksToRender[length].created_at).toDateString()
-      this.setState({tasks: tasksToRender})
+    addTask: addTask = async (newTask) => { // Adding a task
       let res = await createTask(newTask)
-      if (res.status !== 200) alert("Error: task didint add to DB")
+      if (res.status !== 200) {
+        alert("Error: task didint add to DB")
+        return
+      }
+      newTask.created_at = new Date(newTask.created_at).toDateString() // converting timestap into date string
+      let tasksToRender:Array<Task> = this.state.tasks
+      tasksToRender.push(newTask)
+      this.setState({tasks: tasksToRender})
     }
-    
 
+    loginUser: loginUser = async (user) => {
+      let res = await login(user)
+      
+    }
 
-    
+    validateUser: validateUser = (newUser) => {
+      console.log(newUser)
+    }
+
+    createUser: createUser = async (user) => {
+      console.log(user)
+    }
 
   render() {
     const tasks = this.state.tasks
@@ -82,8 +84,9 @@ export default class App extends Component {
       <div className="tasks-app">
           <HashRouter>
             <Switch>
-              <Route exact path="/" component={() => <TaskList tasks={tasks} updateTask={this.updateTask} toggleTask={this.toggleTask} deleteTask={this.deleteTask}/>}></Route>
-              <Route path="/:id" render={({match}) => (
+              <Route exact path="/" component={()=> <UserLogin validateUser={this.validateUser} loginUser={this.loginUser}  ></UserLogin>}></Route>
+              <Route exact path="/tasks" component={() => <TaskList tasks={tasks} updateTask={this.updateTask} toggleTask={this.toggleTask} deleteTask={this.deleteTask}/>}></Route>
+              <Route path="/tasks/:id" render={({match}) => (
                 <TaskEdit updateTask={this.updateTask} getTask={this.getTask} id={match.params.id}></TaskEdit>
                 )}></Route>
             </Switch>

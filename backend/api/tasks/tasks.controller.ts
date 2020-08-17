@@ -4,12 +4,26 @@ import { connect } from '../../services/db.service'
 
 import { Task } from '../../interface/Task'
 
+import { secret } from '../../config/config'
+
+import jwt = require('jsonwebtoken')
+
 
 export async function getTasks(req: Request, res: Response): Promise<Response | void> {
+    const token = req.headers.authorization
+    console.log('inside get tasks', token)
+
     try {
-        const conn = await connect()
-        const tasks = await conn.query('SELECT * FROM tasks')
-        return res.json(tasks[0])
+        jwt.verify(token, secret, async (err, data) => {
+            console.log('inside token verifying')
+
+            if (err) res.sendStatus(403)
+            else {
+                const conn = await connect()
+                const tasks = await conn.query('SELECT * FROM tasks')
+                return res.json(tasks[0])
+            }
+        })
     }
     catch(err) {
         throw err
@@ -48,7 +62,7 @@ export async function deleteTask(req: Request, res: Response) {
     
     try {
         const conn = await connect()
-        await conn.query('DELETE FROM heroku_4fca849545158fb.tasks WHERE id = ?', [id]);
+        await conn.query('DELETE FROM tasks WHERE id = ?', [id]);
         res.json({
             message: "Task deleted"
         })

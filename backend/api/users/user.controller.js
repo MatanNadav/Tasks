@@ -36,8 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.createUser = exports.getUser = void 0;
+exports.login = exports.createUser = exports.getUser = void 0;
 var db_service_1 = require("../../services/db.service");
+var config_1 = require("../../config/config");
+var jwt = require("jsonwebtoken");
 function getUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var id, conn, user, err_1;
@@ -94,3 +96,42 @@ function createUser(req, res) {
     });
 }
 exports.createUser = createUser;
+function login(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user, conn, dbUser, userFromDB, err_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!req.body.name)
+                        return [2 /*return*/, res.sendStatus(401)];
+                    user = req.body;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, db_service_1.connect()];
+                case 2:
+                    conn = _a.sent();
+                    return [4 /*yield*/, conn.query('SELECT * FROM users WHERE name = ?', [user.name])];
+                case 3:
+                    dbUser = _a.sent();
+                    userFromDB = dbUser[0][0];
+                    if (!userFromDB || userFromDB.password !== user.password)
+                        return [2 /*return*/, res.sendStatus(401)]; //Authorizong the User in the DB
+                    jwt.sign({ userFromDB: userFromDB }, config_1.secret, { expiresIn: '3m' }, function (err, token) {
+                        if (err)
+                            res.sendStatus(403);
+                        res.json({
+                            token: token
+                        });
+                    });
+                    return [3 /*break*/, 5];
+                case 4:
+                    err_3 = _a.sent();
+                    console.log('Error: problem at login user');
+                    throw err_3;
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.login = login;

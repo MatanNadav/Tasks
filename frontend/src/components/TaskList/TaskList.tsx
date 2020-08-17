@@ -28,7 +28,7 @@ export const TaskList: React.FC<TaskProps> = ({tasks, toggleTask, deleteTask}) =
                <tbody>
                     {
                         (tasks) ? 
-                        tasks.map(task => <TaskPreview key={task.id} task={task} updateTask={updateTask} toggleTask={toggleTask} deleteTask={deleteTask}></TaskPreview>) :
+                        tasks.map( (task, i) => <TaskPreview key={i} task={task}  toggleTask={toggleTask} deleteTask={deleteTask}></TaskPreview>) :
                         <h1>No tasks to display</h1>
                     }
                </tbody>

@@ -16,20 +16,20 @@ export async function fetchTasks(): Promise<any> {
     }
 }
 
-export async function fetchTaskById(id: string): Promise<any> {
-    const res = await axios.get(`${BASE_URL}task/`+ id )
-    return res.data
-}
+// export async function fetchTaskById(id: string): Promise<any> {
+//     const res = await axios.get(`${BASE_URL}task/`+ id )
+//     return res.data
+// }
 
-export async function deleteTaskById(id: number): Promise<any> {
-    
+export async function deleteTaskById(id: number | null): Promise<any> {
+    if (!id) return 
     let q = `?q=${id}`
     const res = await axios.delete(`${BASE_URL}task`+ q)
     
     return res
 }
 
-export async function createTask(newTask: Object): Promise<any> {
+export async function createTask(newTask: Task): Promise<any> {
     const res = axios({
         method: 'post',
         url:`${BASE_URL}task`,

@@ -3,10 +3,10 @@ import "./UserLogin.css"
 
 interface LoginProps {
     validateUser: validateUser,
-    createUser: createUser
+    loginUser: loginUser
 }
 
-export const UserLogin: React.FC<LoginProps> = ({validateUser, createUser}) => {
+export const UserLogin: React.FC<LoginProps> = ({validateUser, loginUser}) => {
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
 
@@ -24,7 +24,7 @@ export const UserLogin: React.FC<LoginProps> = ({validateUser, createUser}) => {
     const handleCreate = (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault()
         let user = {id: null, name: name, password: password, is_admin: false}
-        createUser(user)
+        // createUser(user)
     }
 
     return (

@@ -38,32 +38,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.updateTask = exports.deleteTask = exports.getTask = exports.createTask = exports.getTasks = void 0;
 var db_service_1 = require("../../services/db.service");
+var config_1 = require("../../config/config");
+var jwt = require("jsonwebtoken");
 function getTasks(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var conn, tasks, err_1;
+        var token;
+        var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, db_service_1.connect()];
-                case 1:
-                    conn = _a.sent();
-                    return [4 /*yield*/, conn.query('SELECT * FROM tasks')];
-                case 2:
-                    tasks = _a.sent();
-                    return [2 /*return*/, res.json(tasks[0])];
-                case 3:
-                    err_1 = _a.sent();
-                    throw err_1;
-                case 4: return [2 /*return*/];
+            token = req.headers.authorization;
+            console.log('inside get tasks', token);
+            try {
+                jwt.verify(token, config_1.secret, function (err, data) { return __awaiter(_this, void 0, void 0, function () {
+                    var conn, tasks;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                console.log('inside token verifying');
+                                return [4 /*yield*/, db_service_1.connect()];
+                            case 1:
+                                conn = _a.sent();
+                                return [4 /*yield*/, conn.query('SELECT * FROM tasks')];
+                            case 2:
+                                tasks = _a.sent();
+                                return [2 /*return*/, res.json(tasks[0])];
+                        }
+                    });
+                }); });
             }
+            catch (err) {
+                throw err;
+            }
+            return [2 /*return*/];
         });
     });
 }
 exports.getTasks = getTasks;
 function createTask(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var newTask, conn, err_2;
+        var newTask, conn, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -82,8 +94,8 @@ function createTask(req, res) {
                     });
                     return [3 /*break*/, 5];
                 case 4:
-                    err_2 = _a.sent();
-                    throw err_2;
+                    err_1 = _a.sent();
+                    throw err_1;
                 case 5: return [2 /*return*/];
             }
         });
@@ -92,7 +104,7 @@ function createTask(req, res) {
 exports.createTask = createTask;
 function getTask(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, conn, task, err_3;
+        var id, conn, task, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -109,8 +121,8 @@ function getTask(req, res) {
                     res.json(task[0]);
                     return [3 /*break*/, 5];
                 case 4:
-                    err_3 = _a.sent();
-                    throw err_3;
+                    err_2 = _a.sent();
+                    throw err_2;
                 case 5: return [2 /*return*/];
             }
         });
@@ -119,7 +131,7 @@ function getTask(req, res) {
 exports.getTask = getTask;
 function deleteTask(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, conn, err_4;
+        var id, conn, err_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -130,7 +142,7 @@ function deleteTask(req, res) {
                     return [4 /*yield*/, db_service_1.connect()];
                 case 2:
                     conn = _a.sent();
-                    return [4 /*yield*/, conn.query('DELETE FROM heroku_4fca849545158fb.tasks WHERE id = ?', [id])];
+                    return [4 /*yield*/, conn.query('DELETE FROM tasks WHERE id = ?', [id])];
                 case 3:
                     _a.sent();
                     res.json({
@@ -138,8 +150,8 @@ function deleteTask(req, res) {
                     });
                     return [3 /*break*/, 5];
                 case 4:
-                    err_4 = _a.sent();
-                    throw err_4;
+                    err_3 = _a.sent();
+                    throw err_3;
                 case 5: return [2 /*return*/];
             }
         });
@@ -148,7 +160,7 @@ function deleteTask(req, res) {
 exports.deleteTask = deleteTask;
 function updateTask(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var updatedTask, id, conn, err_5;
+        var updatedTask, id, conn, err_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -168,8 +180,8 @@ function updateTask(req, res) {
                     });
                     return [3 /*break*/, 5];
                 case 4:
-                    err_5 = _a.sent();
-                    throw err_5;
+                    err_4 = _a.sent();
+                    throw err_4;
                 case 5: return [2 /*return*/];
             }
         });

@@ -6,10 +6,9 @@ interface PreviewProps {
    task: Task,
    toggleTask: toggleTask,
    deleteTask: deleteTask,
-   updateTask: updateTask
 }
 
-export const TaskPreview: React.FC<PreviewProps> = ({task, toggleTask, deleteTask, updateTask}) => { 
+export const TaskPreview: React.FC<PreviewProps> = ({task, toggleTask, deleteTask}) => { 
     return (
         task && <tr>
             <td className={task.is_finished ? "complete" : undefined}>{task.title}</td>
@@ -20,7 +19,7 @@ export const TaskPreview: React.FC<PreviewProps> = ({task, toggleTask, deleteTas
                 </label>
             </td>
             <td>
-                <button className="action-edit btn"><Link className="edit-link" to={`/${task.id}`}>Edit</Link></button>
+                <button className="action-edit btn"><Link className="edit-link" to={`tasks/${task.id}`}>Edit</Link></button>
                 <button onClick={() => deleteTask(task)} className="action-delete btn">Delete</button>
             </td>
         </tr>

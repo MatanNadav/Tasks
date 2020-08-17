@@ -2,10 +2,11 @@
 exports.__esModule = true;
 var express_1 = require("express");
 var tasks_controller_1 = require("./tasks.controller");
+var verify_1 = require("../../middleware/verify");
 var router = express_1.Router();
-router.get('/task', tasks_controller_1.getTasks);
-router.post('/task', tasks_controller_1.createTask);
-router.get('/task/:id', tasks_controller_1.getTask);
-router["delete"]('/task', tasks_controller_1.deleteTask);
-router.put('/task', tasks_controller_1.updateTask);
+router.get('/task', verify_1.verifyToken, tasks_controller_1.getTasks);
+router.post('/task', verify_1.verifyToken, tasks_controller_1.createTask);
+router.get('/task/:id', verify_1.verifyToken, tasks_controller_1.getTask);
+router["delete"]('/task', verify_1.verifyToken, tasks_controller_1.deleteTask);
+router.put('/task', verify_1.verifyToken, tasks_controller_1.updateTask);
 exports["default"] = router;

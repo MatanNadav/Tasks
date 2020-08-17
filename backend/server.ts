@@ -5,13 +5,14 @@ import userRoutes from './api/users/user.route'
 
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const session = require('express-session')
 const port: Number | String = process.env.PORT || 8080;
 
 const app: express.Application = express();
 
 app.use(bodyParser.json());
 app.use(express.static( 'public' ));
+
+
 
 if (process.env.NODE_ENV !== 'production') {
     const corsOptions = {
@@ -20,12 +21,6 @@ if (process.env.NODE_ENV !== 'production') {
     };
     app.use(cors(corsOptions));
 }
-
-app.use(session({
-    secret: "covid-key",
-    resave: false,
-    saveUnintialized: false
-}));
 
 
 app.use(tasksRoute)

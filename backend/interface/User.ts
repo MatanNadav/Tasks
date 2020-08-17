@@ -1,5 +1,5 @@
 export interface User {
-    id?: String,
+    id?: String | Number,
     name: String,
     password: String,
     is_admin: Boolean,
